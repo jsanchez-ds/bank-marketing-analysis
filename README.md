@@ -103,7 +103,7 @@ The `databricks-version` branch contains the original Databricks `.py` source fo
 
 ## 🔁 v2 Iteration
 
-A second version of the modeling pipeline lives on the [`v2-imblearn-pipeline`](https://github.com/Jonathan742001/bank-marketing-analysis/tree/v2-imblearn-pipeline) branch. It addresses the SMOTE-in-CV leakage diagnosed above by wrapping resampling and the classifier in an `imblearn.pipeline.Pipeline`, plus adds:
+A second version of the modeling pipeline lives on the [`v2-imblearn-pipeline`](https://github.com/jsanchez-ds/bank-marketing-analysis/tree/v2-imblearn-pipeline) branch. It addresses the SMOTE-in-CV leakage diagnosed above by wrapping resampling and the classifier in an `imblearn.pipeline.Pipeline`, plus adds:
 
 - Threshold tuning optimized for F1 / business cost
 - PR-AUC alongside ROC-AUC (more honest under heavy imbalance)
@@ -122,7 +122,7 @@ A second version of the modeling pipeline lives on the [`v2-imblearn-pipeline`](
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/Jonathan742001/bank-marketing-analysis.git
+git clone https://github.com/jsanchez-ds/bank-marketing-analysis.git
 cd bank-marketing-analysis
 
 # 2. Install dependencies
@@ -142,5 +142,5 @@ To run on Databricks instead, import the `.py` files from the `databricks-versio
 ## 👤 Author
 
 **Jonathan Sánchez**
-- GitHub: [@Jonathan742001](https://github.com/Jonathan742001)
+- GitHub: [@jsanchez-ds](https://github.com/jsanchez-ds)
 - Universidad de Chile — Industrial Engineering
