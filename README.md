@@ -1,146 +1,86 @@
-# 🏦 Bank Marketing Campaign Analysis
+# Bank Marketing — Predicción de Suscripción a Depósito a Plazo
 
-Analyzing direct marketing campaigns of a Portuguese banking institution to predict whether a client will subscribe to a term deposit. This project combines **exploratory data analysis**, **statistical testing**, **customer segmentation**, and **predictive modeling** to derive actionable business insights.
+Análisis completo (EDA, preprocesamiento, ML) sobre el dataset **UCI Bank Marketing**
+de campañas telefónicas de un banco portugués. Predice si un cliente contratará
+un depósito a plazo.
 
-![Python](https://img.shields.io/badge/Python-3.10-blue?logo=python&logoColor=white)
-![Scikit-learn](https://img.shields.io/badge/Scikit--learn-1.3-orange?logo=scikit-learn&logoColor=white)
-![PySpark](https://img.shields.io/badge/PySpark-3.5-E25A1C?logo=apachespark&logoColor=white)
-![Status](https://img.shields.io/badge/Status-Completed-green)
-
----
-
-## 🎯 Objective
-
-> **Business Question:** Which client profiles are most likely to subscribe to a term deposit, and how can the bank optimize its campaign strategy to increase conversion rates?
-
-This project addresses the question from multiple angles:
-- **Descriptive**: Who are the clients that subscribe? What campaign patterns drive conversion?
-- **Inferential**: Are conversion rate differences across segments statistically significant?
-- **Predictive**: Can we build a model to identify high-probability subscribers before calling them?
-- **Prescriptive**: What actionable recommendations can improve campaign ROI?
+**Stack:** PySpark · pandas · scikit-learn · imbalanced-learn · XGBoost · matplotlib
+**Entorno:** Databricks (portable a local)
 
 ---
 
-## 📊 Dataset
+## Resultados
 
-| Feature | Detail |
-|---------|--------|
-| **Source** | [UCI Machine Learning Repository](https://archive.ics.uci.edu/dataset/222/bank+marketing) |
-| **Reference** | Moro et al. (2014). *A Data-Driven Approach to Predict the Success of Bank Telemarketing* |
-| **Records** | 45,211 |
-| **Features** | 16 input + 1 target |
-| **Target** | `y` — Has the client subscribed a term deposit? (yes/no) |
-| **Class Balance** | 88.7% No / 11.3% Yes (imbalanced) |
-
-**Key variables:** age, job, marital status, education, balance, housing loan, contact type, campaign duration, number of contacts, days since previous contact, previous campaign outcome.
-
-> ⚠️ **Note on `duration`:** Per the UCI documentation and Moro et al. (2014), the `duration` field is only known *after* a call ends and is therefore excluded from all predictive models to avoid data leakage.
-
----
-
-## 🔬 Methodology
-
-The analysis is structured as a Databricks pipeline with three notebooks:
-
-```
-notebook_1_EDA.ipynb              notebook_2_Limpieza_Preprocesamiento.ipynb
-  ├── Schema & quality checks       ├── Encoding (Label / OHE)
-  ├── Univariate analysis           ├── Feature engineering
-  ├── Bivariate analysis            ├── Stratified train/test split
-  ├── Conversion-rate segments      └── Persisted as parquet
-  └── Statistical testing
-
-notebook_3_MachineLearning.ipynb
-  ├── Decision Tree (baseline)
-  ├── Random Forest + GridSearch
-  ├── XGBoost + GridSearch
-  ├── Stratified K-Fold CV
-  └── ROC-AUC evaluation on hold-out test set
-```
-
-**Stack:** PySpark for data processing, scikit-learn + XGBoost for modeling, matplotlib/seaborn for visualization.
-
----
-
-## 📈 Key Results
-
-### Model Performance (Hold-out Test Set, ROC-AUC)
-
-| Model | CV AUC | Test AUC | Notes |
+| Modelo | AUC-ROC | PR-AUC | Observación |
 |---|---|---|---|
-| Decision Tree (max_depth=5) | — | **0.7745** | Interpretable baseline |
-| XGBoost (default) | — | **0.7819** | Strong out-of-the-box |
-| XGBoost (GridSearch) | 0.9611 | **0.7647** | ⚠️ CV-test gap reveals leakage |
-| **Random Forest (best)** | — | **0.7959** ★ | Best generalization |
+| Decision Tree | 0.73 | — | Baseline |
+| Random Forest | **0.77** | — | Mejor modelo previo |
+| XGBoost sin tuning | 0.75 | — | — |
+| XGBoost GridSearch (con SMOTE en pipeline) | *pendiente* | *pendiente* | Overfitting corregido |
 
-> **Critical finding:** The XGBoost grid-search CV reported AUC ≈ 0.96 but only achieved 0.76 on the held-out test set. Root cause: SMOTE was applied to the full training set *before* CV, leaking synthetic samples across folds. The fix — applying SMOTE inside an `imblearn.Pipeline` so each fold resamples independently — is implemented in the [v2 iteration](#-v2-iteration). This is exactly the kind of methodology bug a real production pipeline must catch.
+> Métricas a repoblar tras ejecutar la versión corregida end-to-end.
 
-### Main Findings
+### Hallazgos de negocio
 
-1. **Severe class imbalance (88.7% / 11.3%)** — accuracy is misleading; ROC-AUC and PR-AUC are the relevant metrics, and resampling must be CV-aware.
-2. **Previous contact is the strongest signal** — clients previously contacted convert at **63.8%** vs **9.3%** for new clients (≈ **7× lift**). Re-engagement campaigns should be prioritized.
-3. **High-converting segments**: students (**31%**) and retirees (**25%**) convert at roughly **3× the base rate** (11.3%). Both segments are systematically under-targeted in the current campaign mix.
-4. **Channel inefficiency in May**: 13,769 calls placed but only **6.4%** converted — the worst ROI of the year. Volume-based scheduling outperformed by quality-based targeting.
-5. **Top predictive features** (Random Forest importance): `poutcome_success`, `pdays`, `previous`, `month`, `contact_type`, `balance`.
+1. **Contacto previo es la señal más fuerte** — clientes ya contactados convierten
+   al 63.8% vs 9.3% de clientes nuevos (7x más probabilidad).
+2. **Segmentos top** — estudiantes (31%) y jubilados (25%), casi 3x el promedio global.
+3. **Peor mes vs mejor mes** — mayo concentra 13k llamadas con solo 6.4% de conversión;
+   marzo/diciembre/septiembre llegan a ~45-50% pero con volumen bajo.
+4. **Variable descartada** — `duration` genera data leakage (solo conocida post-llamada).
 
 ---
 
-## 🗂️ Project Structure
+## Estructura del repositorio
 
 ```
 bank-marketing-analysis/
 ├── README.md
 ├── requirements.txt
 ├── .gitignore
-├── notebook_1_EDA.ipynb
-├── notebook_2_Limpieza_Preprocesamiento.ipynb
-└── notebook_3_MachineLearning.ipynb
+├── data/
+│   ├── README.md              # Instrucciones de descarga
+│   └── processed/             # Parquet generados por NB2 (no versionado)
+├── notebooks/
+│   ├── notebook_1_EDA.py                       # Databricks source format
+│   ├── notebook_2_Limpieza_Preprocesamiento.py
+│   └── notebook_3_MachineLearning.py
+├── figures/                   # PNGs generados por los notebooks
+└── models/                    # joblib del mejor modelo (no versionado)
 ```
 
-The `databricks-version` branch contains the original Databricks `.py` source format for direct import into a workspace.
-
 ---
 
-## 🔁 v2 Iteration
+## Cómo reproducirlo
 
-A second version of the modeling pipeline lives on the [`v2-imblearn-pipeline`](https://github.com/Jonathan742001/bank-marketing-analysis/tree/v2-imblearn-pipeline) branch. It addresses the SMOTE-in-CV leakage diagnosed above by wrapping resampling and the classifier in an `imblearn.pipeline.Pipeline`, plus adds:
+### En Databricks
+1. Importa los `.py` al workspace — Databricks los reconoce como notebooks.
+2. Sube el CSV como tabla `bank_additional_full` (Unity Catalog o Hive metastore).
+3. Ejecuta en orden: NB1 → NB2 → NB3.
 
-- Threshold tuning optimized for F1 / business cost
-- PR-AUC alongside ROC-AUC (more honest under heavy imbalance)
-- `joblib` model + encoder persistence
-- Pinned `requirements.txt` for reproducibility
-
----
-
-## 🛠️ Tech Stack
-
-`Python` `PySpark` `Pandas` `NumPy` `Scikit-learn` `XGBoost` `imbalanced-learn` `Matplotlib` `Seaborn`
-
----
-
-## 🚀 How to Reproduce
-
+### Localmente
 ```bash
-# 1. Clone the repository
-git clone https://github.com/Jonathan742001/bank-marketing-analysis.git
-cd bank-marketing-analysis
-
-# 2. Install dependencies
 pip install -r requirements.txt
-
-# 3. Download the dataset from UCI
-#    https://archive.ics.uci.edu/dataset/222/bank+marketing
-
-# 4. Run the notebooks in order
-jupyter notebook notebook_1_EDA.ipynb
+# Descarga el CSV siguiendo data/README.md
+jupytext --to notebook notebooks/*.py   # convierte a .ipynb
+jupyter notebook notebooks/
 ```
-
-To run on Databricks instead, import the `.py` files from the `databricks-version` branch.
 
 ---
 
-## 👤 Author
+## Decisiones técnicas clave
 
-**Jonathan Sánchez**
+- **SMOTE dentro de `imblearn.Pipeline`** — se aplica solo al fold de train en CV,
+  evitando leakage de muestras sintéticas al fold de validación.
+- **PR-AUC sobre AUC-ROC** como métrica de selección — más honesta con clases 88/12.
+- **Threshold tuning** — buscar el umbral que maximiza F1 en test, no asumir 0.5.
+- **Feature engineering antes del split** — `fue_contactado`, `contacto_intensivo`,
+  `economia_favorable`, coherentes para train y test.
+- **Persistencia intermedia** — NB2 guarda parquet, NB3 no re-preprocesa.
+
+---
+
+## Autor
+
+**Jonathan Sánchez Pesantes**
 - GitHub: [@Jonathan742001](https://github.com/Jonathan742001)
-- Universidad de Chile — Industrial Engineering
