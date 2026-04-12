@@ -6,7 +6,7 @@ Analyzing direct marketing campaigns of a Portuguese banking institution to pred
 ![Scikit-learn](https://img.shields.io/badge/Scikit--learn-1.3-orange?logo=scikit-learn&logoColor=white)
 ![PySpark](https://img.shields.io/badge/PySpark-3.5-E25A1C?logo=apachespark&logoColor=white)
 ![Status](https://img.shields.io/badge/Status-Completed-green)
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Streamlit-FF4B4B?logo=streamlit&logoColor=white)](https://share.streamlit.io)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Streamlit-FF4B4B?logo=streamlit&logoColor=white)](https://bank-marketing-analysis-jsanchez.streamlit.app/)
 
 ---
 
@@ -143,6 +143,9 @@ To run on Databricks instead, import the `.py` files from the `databricks-versio
 ---
 
 ## Live Demo (Streamlit)
+
+**[→ Try it live](https://bank-marketing-analysis-jsanchez.streamlit.app/)**
+
 
 An interactive Streamlit app wraps the Random Forest classifier and exposes it as
 a scoring tool with three tabs:
