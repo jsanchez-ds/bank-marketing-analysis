@@ -6,6 +6,7 @@ Analyzing direct marketing campaigns of a Portuguese banking institution to pred
 ![Scikit-learn](https://img.shields.io/badge/Scikit--learn-1.3-orange?logo=scikit-learn&logoColor=white)
 ![PySpark](https://img.shields.io/badge/PySpark-3.5-E25A1C?logo=apachespark&logoColor=white)
 ![Status](https://img.shields.io/badge/Status-Completed-green)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Streamlit-FF4B4B?logo=streamlit&logoColor=white)](https://share.streamlit.io)
 
 ---
 
@@ -136,6 +137,33 @@ jupyter notebook notebook_1_EDA.ipynb
 ```
 
 To run on Databricks instead, import the `.py` files from the `databricks-version` branch.
+
+---
+
+---
+
+## Live Demo (Streamlit)
+
+An interactive Streamlit app wraps the Random Forest classifier and exposes it as
+a scoring tool with three tabs:
+
+- **Predict** — score a hypothetical client with a tunable decision threshold and
+  CALL/SKIP recommendation.
+- **Insights** — headline conversion-rate findings (warm leads ~7x lift, students
+  ~3x base rate, May campaign ROI).
+- **Model Card** — held-out ROC-AUC / PR-AUC, ROC curve, confusion matrix, top 15
+  features, and the `duration` leakage caveat.
+
+Run locally:
+
+```bash
+pip install -r app/requirements.txt
+python app/train_model.py            # one-time, ~30s
+streamlit run app/streamlit_app.py
+```
+
+See [`app/README.md`](app/README.md) for the full guide and Streamlit Community
+Cloud deployment steps.
 
 ---
 
