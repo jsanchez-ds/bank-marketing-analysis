@@ -1,5 +1,12 @@
 # 🏦 Bank Marketing Campaign Analysis
 
+[![Streamlit Demo](https://img.shields.io/badge/Live_Demo-Streamlit-FF4B4B?logo=streamlit&logoColor=white)](https://bank-marketing-analysis-jsanchez.streamlit.app/)
+![Python](https://img.shields.io/badge/Python-3.11-3776AB?logo=python&logoColor=white)
+![scikit-learn](https://img.shields.io/badge/scikit--learn-RF-F7931E?logo=scikitlearn&logoColor=white)
+
+> **[→ Try the interactive demo](https://bank-marketing-analysis-jsanchez.streamlit.app/)** — score any client profile, explore segments, and review model performance.
+
+
 Analyzing direct marketing campaigns of a Portuguese banking institution to predict whether a client will subscribe to a term deposit. This project combines **exploratory data analysis**, **statistical testing**, **customer segmentation**, and **predictive modeling** to derive actionable business insights.
 
 ![Python](https://img.shields.io/badge/Python-3.10-blue?logo=python&logoColor=white)
