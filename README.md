@@ -1,3 +1,5 @@
+🌐 **English** · [Español](README.es.md)
+
 # 🏦 Bank Marketing Campaign Analysis
 
 [![Streamlit Demo](https://img.shields.io/badge/Live_Demo-Streamlit-FF4B4B?logo=streamlit&logoColor=white)](https://bank-marketing-analysis-jsanchez.streamlit.app/)
